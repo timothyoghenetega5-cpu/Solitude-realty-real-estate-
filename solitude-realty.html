@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solitude Realty — Find Your Perfect Sanctuary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --royal: #0A1F44;
+    --royal-mid: #0d2654;
+    --electric: #1E90FF;
+    --electric-light: #4da8ff;
+    --electric-pale: #a8d4ff;
+    --white: #ffffff;
+    --off-white: #f0f4ff;
+    --glass-bg: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.1);
+    --text-dim: rgba(255,255,255,0.55);
+    --shadow-blue: rgba(30,144,255,0.25);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--royal);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── LOADER ── */
+  #loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--royal);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity .6s ease, visibility .6s ease;
+  }
+  #loader.hide { opacity: 0; visibility: hidden; }
+  .loader-logo {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, var(--white) 0%, var(--electric) 60%, var(--electric-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(30,144,255,.6));
+    animation: loaderGlow 1.4s ease-in-out infinite alternate;
+  }
+  .loader-bar {
+    margin-top: 2rem; width: 180px; height: 2px;
+    background: rgba(255,255,255,.12); border-radius: 999px; overflow: hidden;
+  }
+  .loader-bar-inner {
+    height: 100%; width: 0; border-radius: 999px;
+    background: linear-gradient(90deg, var(--electric), var(--electric-light));
+    animation: loadBar 1.8s ease forwards;
+  }
+  @keyframes loaderGlow {
+    from { filter: drop-shadow(0 0 20px rgba(30,144,255,.4)); }
+    to   { filter: drop-shadow(0 0 50px rgba(30,144,255,.9)); }
+  }
+  @keyframes loadBar { to { width: 100%; } }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.4rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background .4s ease, backdrop-filter .4s ease, padding .4s ease, box-shadow .4s ease;
+  }
+  nav.scrolled {
+    background: rgba(10,31,68,.92);
+    backdrop-filter: blur(20px);
+    padding: 1rem 5%;
+    box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 8px 32px rgba(0,0,0,.3);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 1.35rem;
+    background: linear-gradient(135deg, #fff 0%, var(--electric-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -.02em; text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,.75); text-decoration: none;
+    font-size: .88rem; font-weight: 400; letter-spacing: .02em;
+    transition: color .25s ease; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
+    background: var(--electric); transition: width .3s ease;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    padding: .55rem 1.4rem; border-radius: 999px;
+    background: linear-gradient(135deg, var(--electric), #0a6ccc);
+    color: #fff; font-size: .88rem; font-weight: 500;
+    text-decoration: none; transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 4px 20px rgba(30,144,255,.3);
+  }
+  .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(30,144,255,.5); }
+
+  /* hamburger */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: all .3s ease; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: rgba(8,20,50,.97); backdrop-filter: blur(20px);
+    flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+    color: rgba(255,255,255,.8); text-decoration: none; transition: color .25s;
+  }
+  .mobile-menu a:hover { color: var(--electric); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; text-align: center;
+  }
+
+  /* Animated gradient BG */
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(30,144,255,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(30,144,255,.10) 0%, transparent 60%),
+      linear-gradient(160deg, #071530 0%, #0A1F44 50%, #0b2558 100%);
+  }
+
+  /* Animated grid */
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 1;
+    background-image:
+      linear-gradient(rgba(30,144,255,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,144,255,.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+    mask-image: linear-gradient(to bottom, transparent, rgba(0,0,0,.6) 20%, rgba(0,0,0,.6) 80%, transparent);
+  }
+  @keyframes gridDrift { from { background-position: 0 0; } to { background-position: 0 60px; } }
+
+  /* Particles canvas */
+  #particles { position: absolute; inset: 0; z-index: 2; }
+
+  /* Glowing orbs */
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); opacity: .35; z-index: 1;
+    animation: orbFloat 12s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 500px; height: 500px; top: -100px; left: -100px; background: radial-gradient(circle, rgba(30,144,255,.5), transparent 70%); animation-duration: 15s; }
+  .orb-2 { width: 400px; height: 400px; bottom: -50px; right: -50px; background: radial-gradient(circle, rgba(10,108,204,.6), transparent 70%); animation-duration: 18s; animation-delay: -6s; }
+  .orb-3 { width: 300px; height: 300px; top: 40%; left: 60%; background: radial-gradient(circle, rgba(30,144,255,.3), transparent 70%); animation-duration: 20s; animation-delay: -9s; }
+  @keyframes orbFloat {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px,40px) scale(1.1); }
+  }
+
+  .hero-content {
+    position: relative; z-index: 5;
+    max-width: 900px; padding: 0 1.5rem;
+    padding-top: 6rem;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .4rem 1rem; border-radius: 999px;
+    background: rgba(30,144,255,.12); border: 1px solid rgba(30,144,255,.3);
+    font-size: .78rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--electric-light); margin-bottom: 2rem;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--electric); animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 7vw, 6.5rem);
+    font-weight: 800; line-height: 1.0;
+    letter-spacing: -.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp .8s .15s ease both;
+  }
+  .hero-h1 .line-plain { display: block; color: #fff; }
+  .hero-h1 .line-grad {
+    display: block;
+    background: linear-gradient(135deg, var(--electric-light) 0%, var(--electric) 50%, #a8d4ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(30,144,255,.4));
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 300;
+    color: rgba(255,255,255,.65); line-height: 1.7; max-width: 580px;
+    margin: 0 auto 2.5rem;
+    animation: fadeUp .8s .3s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp .8s .45s ease both;
+  }
+  .btn-primary {
+    padding: .9rem 2.2rem; border-radius: 999px;
+    background: linear-gradient(135deg, var(--electric) 0%, #0a6ccc 100%);
+    color: #fff; font-size: .95rem; font-weight: 500;
+    text-decoration: none; border: none; cursor: pointer;
+    box-shadow: 0 6px 30px rgba(30,144,255,.4);
+    transition: transform .25s, box-shadow .25s;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+    opacity: 0; transition: opacity .25s;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(30,144,255,.55); }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-outline {
+    padding: .9rem 2.2rem; border-radius: 999px;
+    background: transparent;
+    color: #fff; font-size: .95rem; font-weight: 500;
+    text-decoration: none; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.25);
+    transition: all .25s; backdrop-filter: blur(8px);
+  }
+  .btn-outline:hover { border-color: var(--electric); color: var(--electric-light); background: rgba(30,144,255,.08); transform: translateY(-3px); }
+
+  /* Stats bar */
+  .hero-stats {
+    display: flex; gap: 0; justify-content: center;
+    margin-top: 4rem; flex-wrap: wrap;
+    animation: fadeUp .8s .6s ease both;
+  }
+  .hero-stat {
+    padding: 1.2rem 2rem; text-align: center;
+    border-right: 1px solid rgba(255,255,255,.1);
+    position: relative;
+  }
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat-num {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+    color: var(--electric-light); line-height: 1.1;
+  }
+  .hero-stat-label { font-size: .78rem; color: rgba(255,255,255,.5); margin-top: .3rem; letter-spacing: .04em; }
+
+  /* scroll cue */
+  .scroll-cue {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 5; animation: bounce 2s ease infinite;
+    display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  }
+  .scroll-cue span { font-size: .72rem; color: rgba(255,255,255,.35); letter-spacing: .1em; text-transform: uppercase; }
+  .scroll-cue-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--electric), transparent); }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── SECTION BASE ── */
+  section { padding: 7rem 5%; }
+  .section-tag {
+    display: inline-block;
+    font-size: .72rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--electric); margin-bottom: 1rem;
+  }
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 800;
+    line-height: 1.1; letter-spacing: -.025em;
+    margin-bottom: 1.2rem;
+  }
+  .section-h2 span {
+    background: linear-gradient(135deg, var(--electric-light), var(--electric));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .section-sub {
+    font-size: 1.05rem; font-weight: 300;
+    color: rgba(255,255,255,.55); max-width: 520px; line-height: 1.7;
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  .reveal-scale { opacity: 0; transform: scale(.9); transition: opacity .6s ease, transform .6s ease; }
+  .reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+  /* delay helpers */
+  .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s}
+  .d4{transition-delay:.4s} .d5{transition-delay:.5s} .d6{transition-delay:.6s}
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── ABOUT ── */
+  #about { background: linear-gradient(180deg, #0A1F44 0%, #081630 100%); }
+  .about-wrap {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+  }
+  .about-visual {
+    position: relative; border-radius: 24px; overflow: hidden;
+    aspect-ratio: 4/5;
+  }
+  .about-img-bg {
+    width: 100%; height: 100%;
+    background:
+      linear-gradient(135deg, rgba(30,144,255,.15) 0%, rgba(10,31,68,.8) 100%),
+      url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80') center/cover no-repeat;
+    border-radius: 24px;
+    transition: transform .6s ease;
+  }
+  .about-visual:hover .about-img-bg { transform: scale(1.04); }
+  .about-visual-badge {
+    position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem;
+    background: rgba(10,31,68,.85); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .badge-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--electric), #0a6ccc);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 1.2rem;
+  }
+  .badge-text strong { display: block; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+  .badge-text span { font-size: .8rem; color: rgba(255,255,255,.55); }
+  .about-frame-line {
+    position: absolute; top: -15px; left: -15px; right: 15px; bottom: 15px;
+    border: 1px solid rgba(30,144,255,.2); border-radius: 24px; pointer-events: none;
+    animation: framePulse 3s ease-in-out infinite alternate;
+  }
+  @keyframes framePulse { from{border-color:rgba(30,144,255,.15)} to{border-color:rgba(30,144,255,.4)} }
+
+  .about-content { }
+  .about-pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2.5rem; }
+  .pillar {
+    padding: 1.3rem; border-radius: 16px;
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    transition: background .3s, border-color .3s, transform .3s;
+  }
+  .pillar:hover { background: rgba(30,144,255,.08); border-color: rgba(30,144,255,.3); transform: translateY(-4px); }
+  .pillar-icon { font-size: 1.5rem; margin-bottom: .6rem; }
+  .pillar h4 { font-family: var(--font-display); font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+  .pillar p { font-size: .82rem; color: rgba(255,255,255,.5); line-height: 1.5; }
+
+  /* ── SERVICES ── */
+  #services { background: #061228; }
+  .services-wrap { max-width: 1200px; margin: 0 auto; }
+  .services-header { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+  .services-header .section-sub { margin: 0 auto; }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .service-card {
+    padding: 2rem; border-radius: 20px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    transition: all .35s ease; cursor: default;
+    position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
+    background: radial-gradient(circle at 50% 0%, rgba(30,144,255,.12), transparent 70%);
+    opacity: 0; transition: opacity .35s ease;
+  }
+  .service-card:hover { transform: translateY(-8px); border-color: rgba(30,144,255,.35); box-shadow: 0 20px 60px rgba(0,0,0,.3), 0 0 0 1px rgba(30,144,255,.15), 0 0 40px rgba(30,144,255,.1); }
+  .service-card:hover::before { opacity: 1; }
+  .service-card:hover .svc-icon { transform: scale(1.15) rotate(-5deg); }
+  .svc-icon {
+    width: 54px; height: 54px; border-radius: 14px; margin-bottom: 1.3rem;
+    background: linear-gradient(135deg, rgba(30,144,255,.2), rgba(30,144,255,.05));
+    border: 1px solid rgba(30,144,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; transition: transform .35s ease;
+  }
+  .service-card h3 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+  .service-card p { font-size: .85rem; color: rgba(255,255,255,.5); line-height: 1.6; }
+  .svc-arrow {
+    display: inline-flex; align-items: center; gap: .3rem;
+    font-size: .8rem; color: var(--electric); margin-top: 1rem;
+    opacity: 0; transform: translateX(-8px); transition: all .3s ease;
+  }
+  .service-card:hover .svc-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ── PROPERTIES ── */
+  #properties { background: linear-gradient(180deg, #061228 0%, #0A1F44 100%); }
+  .properties-wrap { max-width: 1200px; margin: 0 auto; }
+  .properties-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+  .prop-slider-wrap { position: relative; overflow: hidden; }
+  .prop-track {
+    display: flex; gap: 1.5rem;
+    transition: transform .5s cubic-bezier(.4,0,.2,1);
+  }
+  .prop-card {
+    flex: 0 0 calc(33.333% - 1rem); min-width: 280px;
+    border-radius: 20px; overflow: hidden;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    transition: all .35s ease;
+  }
+  .prop-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(30,144,255,.2); }
+  .prop-img {
+    position: relative; aspect-ratio: 16/10; overflow: hidden;
+  }
+  .prop-img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform .5s ease;
+  }
+  .prop-card:hover .prop-img img { transform: scale(1.08); }
+  .prop-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(6,18,40,.8) 0%, transparent 50%);
+  }
+  .prop-badge {
+    position: absolute; top: 1rem; left: 1rem;
+    padding: .3rem .8rem; border-radius: 999px;
+    background: rgba(30,144,255,.85); backdrop-filter: blur(8px);
+    font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  }
+  .prop-price {
+    position: absolute; bottom: 1rem; right: 1rem;
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
+    color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  }
+  .prop-info { padding: 1.4rem; }
+  .prop-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-bottom: .4rem; }
+  .prop-loc { font-size: .83rem; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: .3rem; margin-bottom: 1rem; }
+  .prop-meta { display: flex; gap: 1rem; font-size: .8rem; color: rgba(255,255,255,.45); margin-bottom: 1.2rem; }
+  .prop-meta span { display: flex; align-items: center; gap: .3rem; }
+  .btn-sm {
+    width: 100%; padding: .7rem; border-radius: 10px; text-align: center;
+    background: linear-gradient(135deg, rgba(30,144,255,.15), rgba(30,144,255,.05));
+    border: 1px solid rgba(30,144,255,.3); color: var(--electric-light);
+    font-size: .85rem; font-weight: 500; cursor: pointer;
+    transition: all .25s; text-decoration: none; display: block;
+  }
+  .btn-sm:hover { background: linear-gradient(135deg, var(--electric), #0a6ccc); color: #fff; border-color: transparent; }
+
+  .slider-controls { display: flex; gap: .75rem; justify-content: center; margin-top: 2.5rem; }
+  .slider-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.05); color: #fff; cursor: pointer;
+    font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    transition: all .25s;
+  }
+  .slider-btn:hover { background: var(--electric); border-color: var(--electric); box-shadow: 0 0 20px rgba(30,144,255,.4); }
+  .slider-dots { display: flex; gap: .5rem; align-items: center; }
+  .slider-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,.25); cursor: pointer; transition: all .25s;
+  }
+  .slider-dot.active { background: var(--electric); width: 20px; border-radius: 3px; }
+
+  /* ── INVESTMENT ── */
+  #investment {
+    background: linear-gradient(135deg, #060f22 0%, #0a1a3a 50%, #061228 100%);
+    position: relative; overflow: hidden;
+  }
+  #investment::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(30,144,255,.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(30,144,255,.05) 0%, transparent 40%);
+  }
+  .investment-wrap { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .investment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .inv-content { }
+  .inv-features { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem; }
+  .inv-feature {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    padding: 1.4rem; border-radius: 16px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+    transition: all .3s;
+  }
+  .inv-feature:hover { background: rgba(30,144,255,.06); border-color: rgba(30,144,255,.2); transform: translateX(6px); }
+  .inv-feature-icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--electric), #0a6ccc);
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  }
+  .inv-feature h4 { font-family: var(--font-display); font-weight: 700; font-size: .95rem; margin-bottom: .3rem; }
+  .inv-feature p { font-size: .83rem; color: rgba(255,255,255,.5); line-height: 1.5; }
+
+  /* Chart visual */
+  .inv-visual { position: relative; }
+  .inv-chart-card {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px; padding: 2rem; backdrop-filter: blur(8px);
+  }
+  .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .chart-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+  .chart-badge {
+    padding: .3rem .7rem; border-radius: 999px; font-size: .75rem; font-weight: 600;
+    background: rgba(30,200,100,.15); color: #4dde90; border: 1px solid rgba(30,200,100,.2);
+  }
+  #invChart { width: 100%; height: 200px; }
+
+  /* ROI bars */
+  .roi-bars { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .roi-bar-row { }
+  .roi-bar-label { display: flex; justify-content: space-between; font-size: .82rem; margin-bottom: .4rem; }
+  .roi-bar-label span:first-child { color: rgba(255,255,255,.65); }
+  .roi-bar-label span:last-child { color: var(--electric-light); font-weight: 600; }
+  .roi-bar-track { height: 6px; background: rgba(255,255,255,.08); border-radius: 3px; overflow: hidden; }
+  .roi-bar-fill {
+    height: 100%; border-radius: 3px; width: 0;
+    background: linear-gradient(90deg, var(--electric), var(--electric-light));
+    transition: width 1.5s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 8px rgba(30,144,255,.4);
+  }
+
+  .inv-mini-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.5rem; }
+  .inv-mini-stat {
+    text-align: center; padding: 1rem; border-radius: 12px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+  }
+  .inv-mini-stat-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--electric-light); }
+  .inv-mini-stat-label { font-size: .72rem; color: rgba(255,255,255,.45); margin-top: .2rem; }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background: #0A1F44; overflow: hidden; }
+  .testi-wrap { max-width: 1200px; margin: 0 auto; }
+  .testi-header { text-align: center; max-width: 560px; margin: 0 auto 3.5rem; }
+  .testi-slider { position: relative; overflow: hidden; }
+  .testi-track {
+    display: flex; gap: 1.5rem;
+    animation: testiScroll 25s linear infinite;
+  }
+  .testi-track:hover { animation-play-state: paused; }
+  @keyframes testiScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - .75rem)); }
+  }
+  .testi-card {
+    flex: 0 0 340px;
+    padding: 2rem; border-radius: 20px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(8px);
+    transition: all .3s;
+  }
+  .testi-card:hover { border-color: rgba(30,144,255,.3); background: rgba(30,144,255,.06); }
+  .testi-stars { display: flex; gap: .2rem; margin-bottom: 1rem; }
+  .testi-stars span { color: #FFD700; font-size: .95rem; }
+  .testi-text { font-size: .92rem; color: rgba(255,255,255,.75); line-height: 1.7; margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: .8rem; }
+  .testi-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--electric), #0a6ccc);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-weight: 700; font-size: .85rem;
+  }
+  .testi-name { font-family: var(--font-display); font-weight: 700; font-size: .9rem; }
+  .testi-role { font-size: .78rem; color: rgba(255,255,255,.45); }
+
+  /* fade masks */
+  .testi-slider { position: relative; }
+  .testi-slider::before, .testi-slider::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none;
+  }
+  .testi-slider::before { left: 0; background: linear-gradient(to right, #0A1F44, transparent); }
+  .testi-slider::after  { right: 0; background: linear-gradient(to left, #0A1F44, transparent); }
+
+  /* ── CTA SECTION ── */
+  #cta {
+    background: linear-gradient(135deg, #061228 0%, #0d2654 50%, #061228 100%);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  #cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(30,144,255,.12), transparent 70%);
+  }
+  .cta-wrap { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+  .cta-wrap .section-h2 { margin-bottom: .8rem; }
+  .cta-sub { font-size: 1.05rem; color: rgba(255,255,255,.55); margin-bottom: 2.5rem; line-height: 1.6; }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-whatsapp {
+    padding: .9rem 2.2rem; border-radius: 999px;
+    background: linear-gradient(135deg, #25d366, #128c3e);
+    color: #fff; font-size: .95rem; font-weight: 500;
+    text-decoration: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: .6rem;
+    box-shadow: 0 6px 30px rgba(37,211,102,.3);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .btn-whatsapp:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(37,211,102,.5); }
+
+  /* ── CONTACT ── */
+  #contact { background: #061228; }
+  .contact-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: start; }
+  .contact-info { }
+  .contact-detail { display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border-radius: 14px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); margin-bottom: 1rem; }
+  .contact-detail-icon { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, var(--electric), #0a6ccc); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .contact-detail-text strong { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .2rem; }
+  .contact-detail-text span { font-size: .82rem; color: rgba(255,255,255,.5); }
+  .contact-form { }
+  .form-group { margin-bottom: 1.2rem; position: relative; }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%; padding: .9rem 1.2rem; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+    color: #fff; font-family: var(--font-body); font-size: .9rem;
+    outline: none; transition: border-color .25s, box-shadow .25s;
+    -webkit-appearance: none;
+  }
+  .form-group select option { background: #0a1f44; }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,.35); }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: rgba(30,144,255,.5);
+    box-shadow: 0 0 0 3px rgba(30,144,255,.1);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-submit {
+    width: 100%; padding: 1rem; border-radius: 12px;
+    background: linear-gradient(135deg, var(--electric), #0a6ccc);
+    color: #fff; font-size: .95rem; font-weight: 600;
+    border: none; cursor: pointer; font-family: var(--font-body);
+    box-shadow: 0 6px 24px rgba(30,144,255,.35);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(30,144,255,.5); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: linear-gradient(180deg, #040d1e 0%, #020810 100%);
+    padding: 5rem 5% 2.5rem; border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .footer-wrap { max-width: 1200px; margin: 0 auto; }
+  .footer-top { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 4rem; }
+  .footer-brand p { font-size: .87rem; color: rgba(255,255,255,.45); line-height: 1.7; margin: 1rem 0 1.5rem; max-width: 280px; }
+  .footer-social { display: flex; gap: .75rem; }
+  .social-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center; font-size: .85rem;
+    transition: all .25s; text-decoration: none;
+  }
+  .social-icon:hover { background: var(--electric); border-color: var(--electric); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(30,144,255,.35); }
+  .footer-col h5 { font-family: var(--font-display); font-weight: 700; font-size: .92rem; margin-bottom: 1.2rem; color: rgba(255,255,255,.85); }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+  .footer-col ul li a {
+    font-size: .84rem; color: rgba(255,255,255,.45); text-decoration: none;
+    transition: color .25s;
+  }
+  .footer-col ul li a:hover { color: var(--electric-light); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,.06); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .footer-bottom p { font-size: .82rem; color: rgba(255,255,255,.35); }
+
+  /* ── WHATSAPP FLOAT ── */
+  .wa-float {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 998;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg, #25d366, #128c3e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; text-decoration: none;
+    box-shadow: 0 6px 24px rgba(37,211,102,.4);
+    animation: waPulse 2s ease-in-out infinite;
+    transition: transform .25s;
+  }
+  .wa-float:hover { transform: scale(1.1); animation-play-state: paused; }
+  @keyframes waPulse {
+    0%,100%{box-shadow:0 6px 24px rgba(37,211,102,.4)}
+    50%{box-shadow:0 6px 40px rgba(37,211,102,.7), 0 0 0 12px rgba(37,211,102,.1)}
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .about-wrap, .investment-grid, .contact-wrap { grid-template-columns: 1fr; gap: 3rem; }
+    .about-visual { aspect-ratio: 16/9; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .prop-card { flex: 0 0 calc(50% - .75rem); }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 5%; }
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    section { padding: 5rem 5%; }
+    .about-pillars { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .hero-stats { flex-direction: column; gap: 0; }
+    .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .hero-stat:last-child { border-bottom: none; }
+    .prop-card { flex: 0 0 280px; }
+    .inv-mini-stats { grid-template-columns: 1fr 1fr; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .hero-h1 { font-size: 2.4rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .properties-header { flex-direction: column; align-items: flex-start; }
+    .inv-mini-stats { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Solitude Realty</div>
+  <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Solitude Realty</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#properties">Properties</a></li>
+    <li><a href="#investment">Invest</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get Started</a>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#properties" onclick="closeMobile()">Properties</a>
+  <a href="#investment" onclick="closeMobile()">Invest</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <canvas id="particles"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Nigeria's Premium Real Estate Partner
+    </div>
+    <h1 class="hero-h1">
+      <span class="line-plain">Own Peace.</span>
+      <span class="line-grad">Invest Smart.</span>
+      <span class="line-plain">Live Better.</span>
+    </h1>
+    <p class="hero-sub">Premium real estate solutions tailored for modern investors and homeowners seeking sanctuary in a fast-moving world.</p>
+    <div class="hero-btns">
+      <a href="#properties" class="btn-primary">Explore Properties</a>
+      <a href="#investment" class="btn-outline">Start Investing</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">5.0 ★</div>
+        <div class="hero-stat-label">Client Satisfaction</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-count="500" data-suffix="+">0+</div>
+        <div class="hero-stat-label">Trusted Investors</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">✓ Verified</div>
+        <div class="hero-stat-label">Secure & Verified Listings</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="about-visual reveal-left">
+      <div class="about-frame-line"></div>
+      <div class="about-img-bg"></div>
+      <div class="about-visual-badge">
+        <div class="badge-icon">🏆</div>
+        <div class="badge-text">
+          <strong>Top-Rated Agency</strong>
+          <span>Nigeria Real Estate Awards 2024</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-content reveal-right">
+      <span class="section-tag">Who We Are</span>
+      <h2 class="section-h2">Built on <span>Trust</span>,<br>Driven by Vision</h2>
+      <p class="section-sub">Solitude Realty is a forward-thinking real estate brand helping clients access premium properties and smart investment opportunities across Nigeria. We bridge the gap between aspiration and ownership with integrity, precision, and care.</p>
+      <div class="about-pillars">
+        <div class="pillar">
+          <div class="pillar-icon">🛡️</div>
+          <h4>Trusted Advisory</h4>
+          <p>Expert guidance from licensed professionals who prioritize your interests.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🔒</div>
+          <h4>Secure Transactions</h4>
+          <p>Every deal is legally verified and fully documented for your peace of mind.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">📈</div>
+          <h4>Modern Investing</h4>
+          <p>Fractional investing options that make real estate accessible to everyone.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🌍</div>
+          <h4>Wide Coverage</h4>
+          <p>Properties across Nigeria's prime locations and international markets.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-wrap">
+    <div class="services-header reveal">
+      <span class="section-tag">What We Offer</span>
+      <h2 class="section-h2">Complete Real Estate<br><span>Solutions</span></h2>
+      <p class="section-sub">From land acquisition to luxury investment — we cover every dimension of your real estate journey.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal d1">
+        <div class="svc-icon">🏠</div>
+        <h3>Property Sales & Rentals</h3>
+        <p>Residential properties for sale and rent across Nigeria's most desirable neighborhoods.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d2">
+        <div class="svc-icon">🌿</div>
+        <h3>Land & Building Lot Sales</h3>
+        <p>Prime land parcels in strategic locations — perfect for development or long-term investment.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d3">
+        <div class="svc-icon">💎</div>
+        <h3>Luxury Property Investment</h3>
+        <p>High-value estates and premium assets delivering exceptional returns and prestige.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d1">
+        <div class="svc-icon">🏢</div>
+        <h3>Commercial Real Estate</h3>
+        <p>Office spaces, retail units, and commercial complexes in high-traffic locations.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d2">
+        <div class="svc-icon">🏗️</div>
+        <h3>Property Development</h3>
+        <p>End-to-end project development from architectural planning to final handover.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d3">
+        <div class="svc-icon">🌐</div>
+        <h3>International Property Advisory</h3>
+        <p>Access global real estate markets with our expert cross-border advisory services.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+      <div class="service-card reveal d2">
+        <div class="svc-icon">🔑</div>
+        <h3>Property Management</h3>
+        <p>Comprehensive management services — tenant relations, maintenance, and income optimization.</p>
+        <div class="svc-arrow">Explore →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES -->
+<section id="properties">
+  <div class="properties-wrap">
+    <div class="properties-header">
+      <div class="reveal-left">
+        <span class="section-tag">Featured Listings</span>
+        <h2 class="section-h2">Premium <span>Properties</span></h2>
+      </div>
+      <a href="#contact" class="btn-outline reveal-right">View All Listings</a>
+    </div>
+    <div class="prop-slider-wrap reveal">
+      <div class="prop-track" id="propTrack">
+        <!-- Cards duplicated for loop effect -->
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&q=80" alt="Prestige Villa">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">For Sale</div>
+            <div class="prop-price">₦185M</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Prestige Villa Estate</div>
+            <div class="prop-loc">📍 Lekki Phase 1, Lagos</div>
+            <div class="prop-meta">
+              <span>🛏 5 Beds</span>
+              <span>🛁 4 Baths</span>
+              <span>📐 620m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80" alt="Azure Heights">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">New Listing</div>
+            <div class="prop-price">₦95M</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Azure Heights Apartment</div>
+            <div class="prop-loc">📍 Victoria Island, Lagos</div>
+            <div class="prop-meta">
+              <span>🛏 3 Beds</span>
+              <span>🛁 3 Baths</span>
+              <span>📐 280m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80" alt="Serene Courts">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">For Rent</div>
+            <div class="prop-price">₦8M/yr</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Serene Courts Duplex</div>
+            <div class="prop-loc">📍 Maitama, Abuja</div>
+            <div class="prop-meta">
+              <span>🛏 4 Beds</span>
+              <span>🛁 3 Baths</span>
+              <span>📐 380m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80" alt="Solitude Manor">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">Investment</div>
+            <div class="prop-price">₦220M</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Solitude Manor</div>
+            <div class="prop-loc">📍 Banana Island, Lagos</div>
+            <div class="prop-meta">
+              <span>🛏 6 Beds</span>
+              <span>🛁 6 Baths</span>
+              <span>📐 800m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80" alt="Emerald Park">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">For Sale</div>
+            <div class="prop-price">₦55M</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Emerald Park Terrace</div>
+            <div class="prop-loc">📍 Ikeja GRA, Lagos</div>
+            <div class="prop-meta">
+              <span>🛏 3 Beds</span>
+              <span>🛁 2 Baths</span>
+              <span>📐 210m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-img">
+            <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80" alt="Tranquil Gardens">
+            <div class="prop-img-overlay"></div>
+            <div class="prop-badge">Off-Plan</div>
+            <div class="prop-price">₦42M</div>
+          </div>
+          <div class="prop-info">
+            <div class="prop-name">Tranquil Gardens</div>
+            <div class="prop-loc">📍 Asokoro, Abuja</div>
+            <div class="prop-meta">
+              <span>🛏 3 Beds</span>
+              <span>🛁 3 Baths</span>
+              <span>📐 190m²</span>
+            </div>
+            <a href="#contact" class="btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slider-controls">
+      <button class="slider-btn" id="propPrev">←</button>
+      <div class="slider-dots">
+        <div class="slider-dot active" data-idx="0"></div>
+        <div class="slider-dot" data-idx="1"></div>
+        <div class="slider-dot" data-idx="2"></div>
+        <div class="slider-dot" data-idx="3"></div>
+      </div>
+      <button class="slider-btn" id="propNext">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTMENT -->
+<section id="investment">
+  <div class="investment-wrap">
+    <div class="investment-grid">
+      <div class="inv-content">
+        <span class="section-tag reveal">Smart Investing</span>
+        <h2 class="section-h2 reveal">Invest in Real Estate,<br><span>Starting Small</span></h2>
+        <p class="section-sub reveal">You don't need millions to own a piece of Nigeria's booming real estate market. Solitude Realty opens the door to fractional ownership, passive income, and wealth-building for every Nigerian.</p>
+        <div class="inv-features">
+          <div class="inv-feature reveal d1">
+            <div class="inv-feature-icon">🔀</div>
+            <div>
+              <h4>Fractional Investment</h4>
+              <p>Co-own premium properties with investments as low as ₦500,000. Your share earns proportional returns.</p>
+            </div>
+          </div>
+          <div class="inv-feature reveal d2">
+            <div class="inv-feature-icon">💰</div>
+            <div>
+              <h4>Passive Income Stream</h4>
+              <p>Earn consistent rental income automatically credited to your account monthly.</p>
+            </div>
+          </div>
+          <div class="inv-feature reveal d3">
+            <div class="inv-feature-icon">🔐</div>
+            <div>
+              <h4>Legally Secured Opportunities</h4>
+              <p>Every investment is backed by proper documentation and title verification.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="inv-visual reveal-right">
+        <div class="inv-chart-card">
+          <div class="chart-header">
+            <div class="chart-title">Investment Portfolio Growth</div>
+            <div class="chart-badge">+24.6% ROI</div>
+          </div>
+          <canvas id="invChart"></canvas>
+          <div class="roi-bars">
+            <div class="roi-bar-row">
+              <div class="roi-bar-label"><span>Residential Properties</span><span>32%</span></div>
+              <div class="roi-bar-track"><div class="roi-bar-fill" data-width="32"></div></div>
+            </div>
+            <div class="roi-bar-row">
+              <div class="roi-bar-label"><span>Commercial Assets</span><span>24%</span></div>
+              <div class="roi-bar-track"><div class="roi-bar-fill" data-width="24"></div></div>
+            </div>
+            <div class="roi-bar-row">
+              <div class="roi-bar-label"><span>Land Investment</span><span>18%</span></div>
+              <div class="roi-bar-track"><div class="roi-bar-fill" data-width="18"></div></div>
+            </div>
+            <div class="roi-bar-row">
+              <div class="roi-bar-label"><span>Fractional Portfolios</span><span>26%</span></div>
+              <div class="roi-bar-track"><div class="roi-bar-fill" data-width="26"></div></div>
+            </div>
+          </div>
+          <div class="inv-mini-stats">
+            <div class="inv-mini-stat">
+              <div class="inv-mini-stat-num">₦2.4B+</div>
+              <div class="inv-mini-stat-label">Assets Managed</div>
+            </div>
+            <div class="inv-mini-stat">
+              <div class="inv-mini-stat-num">18-32%</div>
+              <div class="inv-mini-stat-label">Annual Returns</div>
+            </div>
+            <div class="inv-mini-stat">
+              <div class="inv-mini-stat-num">500+</div>
+              <div class="inv-mini-stat-label">Active Investors</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="testi-wrap">
+    <div class="testi-header reveal">
+      <span class="section-tag">Client Stories</span>
+      <h2 class="section-h2">Trusted by <span>Hundreds</span></h2>
+      <p class="section-sub" style="margin:0 auto">Real experiences from investors and homeowners who found their sanctuary with us.</p>
+    </div>
+    <div class="testi-slider">
+      <div class="testi-track" id="testiTrack">
+        <!-- Will be duplicated by JS -->
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"Professional, reliable, and seamless process. Solitude Realty made buying my first home the best experience of my life. Absolutely zero stress."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">AO</div>
+            <div><div class="testi-name">Adaora Okonkwo</div><div class="testi-role">Homeowner · Lagos</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"They helped me secure a commercial property with zero stress. Their team was always available and the documentation process was flawless."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">KI</div>
+            <div><div class="testi-name">Kunle Ibrahim</div><div class="testi-role">Business Owner · Abuja</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"Highly trusted and transparent. I started with fractional investing and within a year, the returns exceeded my expectations. Truly recommended."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">NE</div>
+            <div><div class="testi-name">Ngozi Eze</div><div class="testi-role">Investor · Port Harcourt</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"From land search to title verification — everything was handled with precision. Solitude Realty is the gold standard in Nigerian real estate."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">TA</div>
+            <div><div class="testi-name">Tunde Adeyemi</div><div class="testi-role">Land Investor · Ibadan</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"I relocated from the UK and needed a trustworthy team. They found me a premium apartment in VI within days. Exceptional communication throughout."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">BO</div>
+            <div><div class="testi-name">Bola Omotunde</div><div class="testi-role">Diaspora Client · Lagos</div></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <p class="testi-text">"Passive income from my investment property started within 60 days of signing. The property management team is thorough and proactive."</p>
+          <div class="testi-author">
+            <div class="testi-avatar">CE</div>
+            <div><div class="testi-name">Chuka Emeka</div><div class="testi-role">Portfolio Investor · Enugu</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-wrap">
+    <span class="section-tag reveal">Take Action</span>
+    <h2 class="section-h2 reveal">Ready to Secure<br><span>Your Future?</span></h2>
+    <p class="cta-sub reveal">Join hundreds of Nigerians who've found their perfect sanctuary or built wealth through smart real estate with Solitude Realty.</p>
+    <div class="cta-btns reveal">
+      <a href="#contact" class="btn-primary">Speak with an Expert</a>
+      <a href="https://wa.me/2348024238969" class="btn-whatsapp" target="_blank">
+        <span>💬</span> Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="contact-info reveal-left">
+      <span class="section-tag">Get In Touch</span>
+      <h2 class="section-h2">Let's Start<br><span>Your Journey</span></h2>
+      <p class="section-sub" style="margin-bottom:2rem">Our experts are ready to guide you toward the right property or investment.</p>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📞</div>
+        <div class="contact-detail-text">
+          <strong>Call / WhatsApp</strong>
+          <span>0802 423 8969</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📧</div>
+        <div class="contact-detail-text">
+          <strong>Email Us</strong>
+          <span>hello@solituderealty.ng</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">📍</div>
+        <div class="contact-detail-text">
+          <strong>Office</strong>
+          <span>Lagos, Abuja & Port Harcourt, Nigeria</span>
+        </div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">🕐</div>
+        <div class="contact-detail-text">
+          <strong>Working Hours</strong>
+          <span>Mon – Sat: 8AM – 7PM | Sun: 10AM – 4PM</span>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form reveal-right">
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" placeholder="First Name" required>
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Last Name" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="email" placeholder="Email Address" required>
+      </div>
+      <div class="form-group">
+        <input type="tel" placeholder="Phone Number" required>
+      </div>
+      <div class="form-group">
+        <select>
+          <option value="" disabled selected>What are you interested in?</option>
+          <option>Buy Property</option>
+          <option>Rent Property</option>
+          <option>Invest in Real Estate</option>
+          <option>Sell My Property</option>
+          <option>Property Management</option>
+          <option>Land Purchase</option>
+          <option>General Inquiry</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <textarea placeholder="Tell us more about what you're looking for..."></textarea>
+      </div>
+      <button class="form-submit" onclick="handleFormSubmit(event)">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo" style="font-size:1.4rem">Solitude Realty</div>
+        <p>Find Your Perfect Sanctuary. Invest in Peace. Nigeria's most trusted real estate partner for homeowners, investors, and developers.</p>
+        <div class="footer-social">
+          <a href="#" class="social-icon">𝕏</a>
+          <a href="#" class="social-icon">in</a>
+          <a href="https://wa.me/2348024238969" class="social-icon">💬</a>
+          <a href="#" class="social-icon">📸</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#properties">Properties</a></li>
+          <li><a href="#investment">Invest</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Services</h5>
+        <ul>
+          <li><a href="#">Property Sales</a></li>
+          <li><a href="#">Property Rentals</a></li>
+          <li><a href="#">Land Sales</a></li>
+          <li><a href="#">Fractional Investing</a></li>
+          <li><a href="#">Property Management</a></li>
+          <li><a href="#">Commercial RE</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Locations</h5>
+        <ul>
+          <li><a href="#">Lagos, Nigeria</a></li>
+          <li><a href="#">Abuja, Nigeria</a></li>
+          <li><a href="#">Port Harcourt</a></li>
+          <li><a href="#">Ibadan</a></li>
+          <li><a href="#">International</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Solitude Realty. All rights reserved. | RC: 1234567</p>
+      <p>Privacy Policy · Terms of Service · Cookie Policy</p>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/2348024238969" class="wa-float" target="_blank" title="Chat on WhatsApp">💬</a>
+
+<script>
+/* ── LOADER ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hide');
+  }, 2000);
+});
+
+/* ── NAV SCROLL ── */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ── HAMBURGER ── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileMenu');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+});
+function closeMobile() {
+  ham.classList.remove('open');
+  mob.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── PARTICLES ── */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + .5;
+    this.speedX = (Math.random() - .5) * .4;
+    this.speedY = (Math.random() - .5) * .4;
+    this.opacity = Math.random() * .5 + .1;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.pulse += .02;
+    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.opacity * (.7 + .3 * Math.sin(this.pulse));
+    ctx.fillStyle = '#1E90FF';
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = '#1E90FF';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  // draw connections
+  particles.forEach((a, i) => {
+    particles.slice(i+1).forEach(b => {
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 100) {
+        ctx.save();
+        ctx.globalAlpha = (1 - d/100) * .12;
+        ctx.strokeStyle = '#1E90FF';
+        ctx.lineWidth = .5;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.restore();
+      }
+    });
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ── COUNTER ── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.count);
+  const suffix = el.dataset.suffix || '';
+  let current = 0;
+  const step = target / 80;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = Math.floor(current) + suffix;
+    if (current >= target) clearInterval(timer);
+  }, 20);
+}
+
+/* ── REVEAL OBSERVER ── */
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // counter
+      entry.target.querySelectorAll('[data-count]').forEach(animateCounter);
+      // ROI bars
+      entry.target.querySelectorAll('.roi-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObs.observe(el));
+
+// Trigger counter for hero stat in viewport
+const heroStatObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('[data-count]').forEach(animateCounter);
+      heroStatObs.unobserve(e.target);
+    }
+  });
+});
+document.querySelectorAll('.hero-stats').forEach(el => heroStatObs.observe(el));
+
+/* ── PROPERTY SLIDER ── */
+const track = document.getElementById('propTrack');
+const dots = document.querySelectorAll('.slider-dot');
+let propIdx = 0;
+const propCards = track.querySelectorAll('.prop-card');
+
+function getCardWidth() {
+  const w = window.innerWidth;
+  if (w <= 768) return 1;
+  if (w <= 1024) return 2;
+  return 3;
+}
+
+function updateSlider() {
+  const visible = getCardWidth();
+  const maxIdx = Math.max(0, propCards.length - visible);
+  propIdx = Math.min(propIdx, maxIdx);
+  const cardW = propCards[0].offsetWidth + 24;
+  track.style.transform = `translateX(-${propIdx * cardW}px)`;
+  dots.forEach((d, i) => d.classList.toggle('active', i === propIdx));
+}
+
+document.getElementById('propNext').addEventListener('click', () => {
+  const visible = getCardWidth();
+  propIdx = (propIdx + 1) % (propCards.length - visible + 1);
+  updateSlider();
+});
+document.getElementById('propPrev').addEventListener('click', () => {
+  const visible = getCardWidth();
+  const max = propCards.length - visible;
+  propIdx = propIdx <= 0 ? max : propIdx - 1;
+  updateSlider();
+});
+dots.forEach(d => {
+  d.addEventListener('click', () => { propIdx = parseInt(d.dataset.idx); updateSlider(); });
+});
+window.addEventListener('resize', updateSlider);
+
+/* ── TESTI SLIDER DUPLICATE ── */
+const testiTrack = document.getElementById('testiTrack');
+testiTrack.innerHTML += testiTrack.innerHTML;
+
+/* ── INVESTMENT CHART ── */
+function drawInvChart() {
+  const c = document.getElementById('invChart');
+  if (!c) return;
+  c.width = c.offsetWidth * 2;
+  c.height = 400;
+  c.style.height = '200px';
+  const cx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const data = [42, 55, 48, 70, 65, 88, 82, 105, 98, 125, 118, 145];
+  const maxVal = Math.max(...data) * 1.1;
+  const pts = data.map((v, i) => ({
+    x: (i / (data.length-1)) * (W - 80) + 40,
+    y: H - 60 - (v / maxVal) * (H - 100)
+  }));
+
+  // gradient fill
+  const grad = cx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(30,144,255,.4)');
+  grad.addColorStop(1, 'rgba(30,144,255,.01)');
+
+  cx.beginPath();
+  cx.moveTo(pts[0].x, H - 60);
+  pts.forEach(p => cx.lineTo(p.x, p.y));
+  cx.lineTo(pts[pts.length-1].x, H - 60);
+  cx.closePath();
+  cx.fillStyle = grad;
+  cx.fill();
+
+  // line
+  cx.beginPath();
+  cx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    const mx = (pts[i-1].x + pts[i].x) / 2;
+    cx.bezierCurveTo(mx, pts[i-1].y, mx, pts[i].y, pts[i].x, pts[i].y);
+  }
+  cx.strokeStyle = '#1E90FF';
+  cx.lineWidth = 4;
+  cx.shadowBlur = 10;
+  cx.shadowColor = '#1E90FF';
+  cx.stroke();
+
+  // dots
+  pts.forEach(p => {
+    cx.beginPath();
+    cx.arc(p.x, p.y, 6, 0, Math.PI*2);
+    cx.fillStyle = '#fff';
+    cx.shadowBlur = 8; cx.shadowColor = '#1E90FF';
+    cx.fill();
+  });
+
+  // month labels
+  const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  cx.fillStyle = 'rgba(255,255,255,.4)';
+  cx.font = '20px DM Sans, sans-serif';
+  cx.textAlign = 'center';
+  pts.forEach((p, i) => {
+    cx.fillText(months[i], p.x, H - 20);
+  });
+}
+
+// draw when section visible
+const invObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { drawInvChart(); invObs.unobserve(e.target); }
+  });
+});
+const invSection = document.getElementById('investment');
+if (invSection) invObs.observe(invSection);
+window.addEventListener('resize', drawInvChart);
+
+/* ── ROI BARS observer ── */
+const roiObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.roi-bar-fill').forEach(bar => {
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 300);
+      });
+    }
+  });
+}, { threshold: .4 });
+document.querySelectorAll('.inv-chart-card').forEach(el => roiObs.observe(el));
+
+/* ── FORM SUBMIT ── */
+function handleFormSubmit(e) {
+  e.preventDefault();
+  const btn = e.target;
+  btn.textContent = '✓ Message Sent!';
+  btn.style.background = 'linear-gradient(135deg,#25d366,#128c3e)';
+  setTimeout(() => {
+    btn.textContent = 'Send Message →';
+    btn.style.background = '';
+  }, 3000);
+}
+
+/* ── PARALLAX ── */
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  const orbs = document.querySelectorAll('.orb');
+  orbs.forEach((o, i) => {
+    o.style.transform = `translateY(${y * (i * .04 + .02)}px)`;
+  });
+});
+</script>
+</body>
+</html>
